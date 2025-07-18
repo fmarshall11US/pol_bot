@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus } from "lucide-react";
+import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus, Search, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 
 interface Document {
   id: string;
@@ -15,9 +16,23 @@ interface Document {
   chunk_count?: number;
 }
 
+interface SearchRecommendation {
+  document_id: string;
+  file_name: string;
+  policy_type: string;
+  relevance_score: number;
+  match_reason: string;
+  matched_content: string;
+  source: string;
+}
+
 export default function Dashboard() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchRecommendation[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
 
   useEffect(() => {
     fetchDocuments();
@@ -34,6 +49,37 @@ export default function Dashboard() {
       console.error('Failed to fetch documents:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+
+    setIsSearching(true);
+    try {
+      const response = await fetch('/api/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: searchQuery }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSearchResults(data.recommendations || []);
+        setShowSearch(true);
+      }
+    } catch (error) {
+      console.error('Search failed:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
     }
   };
 
@@ -101,6 +147,93 @@ export default function Dashboard() {
             </Button>
           </a>
         </div>
+
+        {/* Smart Policy Search */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-blue-500" />
+              Smart Policy Search
+            </CardTitle>
+            <CardDescription>
+              Describe what you need and we'll recommend policies based on expert underwriter knowledge and hints
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-2">
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder="e.g., 'coverage for car accident', 'home fire damage', 'business liability'..."
+                className="flex-1"
+              />
+              <Button 
+                onClick={handleSearch} 
+                disabled={isSearching || !searchQuery.trim()}
+                className="px-6"
+              >
+                {isSearching ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Search className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+            
+            {showSearch && (
+              <div className="mt-6">
+                {searchResults.length > 0 ? (
+                  <div className="space-y-3">
+                    <h3 className="font-medium text-gray-900 dark:text-white">
+                      Recommended Policies for "{searchQuery}":
+                    </h3>
+                    {searchResults.map((result) => (
+                      <Card key={result.document_id} className="border-l-4 border-l-blue-500">
+                        <CardContent className="pt-4">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <h4 className="font-medium">{result.file_name}</h4>
+                                <Badge variant="outline">{result.policy_type}</Badge>
+                                <Badge 
+                                  variant={result.relevance_score > 0.7 ? "default" : "secondary"}
+                                  className="text-xs"
+                                >
+                                  {Math.round(result.relevance_score * 100)}% match
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                {result.match_reason}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-500">
+                                "{result.matched_content}"
+                              </p>
+                            </div>
+                            <div className="flex gap-2 ml-4">
+                              <a href={`/qa/${result.document_id}`}>
+                                <Button size="sm" variant="outline">
+                                  <MessageSquare className="h-4 w-4 mr-2" />
+                                  Ask Questions
+                                </Button>
+                              </a>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-gray-600 dark:text-gray-400">
+                      No relevant policies found. Try different search terms or upload more policies.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

@@ -120,3 +120,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Force proper word wrapping for chat messages */
+.chat-message {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  hyphens: auto !important;
+  max-width: 100% !important;
+}

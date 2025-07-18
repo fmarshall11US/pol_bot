@@ -1,4 +1,3 @@
-import { promises as fs } from 'fs';
 import { extractTextWithTextract, isTextractConfigured } from './aws-textract';
 
 export interface TextChunk {
@@ -6,15 +5,14 @@ export interface TextChunk {
   index: number;
 }
 
-export async function extractTextFromPDF(filePath: string, originalFileName?: string): Promise<string> {
-  const stats = await fs.stat(filePath);
-  const fileSizeKB = Math.round(stats.size / 1024);
+export async function extractTextFromPDF(fileBuffer: Buffer, originalFileName?: string): Promise<string> {
+  const fileSizeKB = Math.round(fileBuffer.length / 1024);
   
   // Use AWS Textract if configured
   if (isTextractConfigured()) {
     try {
       console.log('🔍 Using AWS Textract for PDF extraction...');
-      const extractedText = await extractTextWithTextract(filePath);
+      const extractedText = await extractTextWithTextract(fileBuffer);
       
       if (extractedText && extractedText.trim().length > 0) {
         console.log('✅ Successfully extracted', extractedText.length, 'characters from PDF');
@@ -28,7 +26,7 @@ export async function extractTextFromPDF(filePath: string, originalFileName?: st
   }
   
   // Fallback to placeholder text if Textract fails or isn't configured
-  const fileName = (originalFileName || filePath.split('/').pop() || '').toLowerCase();
+  const fileName = (originalFileName || 'document.pdf').toLowerCase();
   
   if (fileName.includes('auto') || fileName.includes('car') || fileName.includes('vehicle')) {
     return `PERSONAL AUTO POLICY
@@ -119,11 +117,10 @@ n. Recall of products
 [This is a sample CGL policy excerpt for a ${fileSizeKB}KB document. In production, actual policy text would be extracted here.]`;
 }
 
-export async function extractTextFromImage(filePath: string): Promise<string> {
+export async function extractTextFromImage(fileBuffer: Buffer): Promise<string> {
   // For now, we'll return a placeholder
   // In a real implementation, you'd use OCR (like Tesseract or Cloud Vision API)
-  const stats = await fs.stat(filePath);
-  const fileSizeKB = Math.round(stats.size / 1024);
+  const fileSizeKB = Math.round(fileBuffer.length / 1024);
   return `Image document (${fileSizeKB}KB). OCR text extraction will be implemented in production.`;
 }
 
@@ -155,13 +152,13 @@ export function splitTextIntoChunks(text: string, maxChunkSize: number = 1000): 
   return chunks;
 }
 
-export async function processDocument(filePath: string, fileType: string, originalFileName?: string): Promise<TextChunk[]> {
+export async function processDocument(fileBuffer: Buffer, fileType: string, originalFileName?: string): Promise<TextChunk[]> {
   let text = '';
   
   if (fileType === 'application/pdf') {
-    text = await extractTextFromPDF(filePath, originalFileName);
+    text = await extractTextFromPDF(fileBuffer, originalFileName);
   } else if (fileType.startsWith('image/')) {
-    text = await extractTextFromImage(filePath);
+    text = await extractTextFromImage(fileBuffer);
   } else {
     throw new Error(`Unsupported file type: ${fileType}`);
   }

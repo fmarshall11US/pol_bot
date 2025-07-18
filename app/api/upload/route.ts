@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
 import crypto from "crypto";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { createEmbedding } from "@/lib/openai";
@@ -43,19 +41,9 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = path.join(process.cwd(), "uploads");
-    await fs.mkdir(uploadsDir, { recursive: true });
-
-    // Save file with unique name
-    const fileExtension = path.extname(file.name);
-    const fileName = `${documentId}${fileExtension}`;
-    const filePath = path.join(uploadsDir, fileName);
-    
-    await fs.writeFile(filePath, buffer);
-
-    // Process document and extract text chunks (pass original filename)
-    const chunks = await processDocument(filePath, file.type, file.name);
+    // For Vercel serverless, we'll process the file directly from memory
+    // Process document from buffer instead of file path
+    const chunks = await processDocument(buffer, file.type, file.name);
     
     // Get Supabase admin client
     const supabase = getSupabaseAdmin();
@@ -90,8 +78,7 @@ export async function POST(request: NextRequest) {
       if (chunkError) throw chunkError;
     }
 
-    // Clean up local file after processing
-    await fs.unlink(filePath);
+    // No cleanup needed - file was processed in memory
 
     return NextResponse.json({
       success: true,

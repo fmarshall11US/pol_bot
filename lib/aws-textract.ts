@@ -1,5 +1,4 @@
 import { TextractClient, DetectDocumentTextCommand } from "@aws-sdk/client-textract";
-import { promises as fs } from 'fs';
 
 // Initialize AWS Textract client
 const textractClient = new TextractClient({
@@ -10,10 +9,8 @@ const textractClient = new TextractClient({
   },
 });
 
-export async function extractTextWithTextract(filePath: string): Promise<string> {
+export async function extractTextWithTextract(fileBuffer: Buffer): Promise<string> {
   try {
-    // Read the file
-    const fileBuffer = await fs.readFile(filePath);
     
     // Prepare the command
     const command = new DetectDocumentTextCommand({

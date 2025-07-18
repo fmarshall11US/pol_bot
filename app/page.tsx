@@ -67,7 +67,7 @@ export default function Home() {
                 Natural Language Q&A
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Ask questions in plain English. No insurance jargon required - we'll translate for you.
+                Ask questions in plain English. No insurance jargon required - we&apos;ll translate for you.
               </p>
             </div>
 

@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { createEmbedding, generateAnswer } from "@/lib/openai";
 
+interface DocumentChunk {
+  id: string;
+  content: string;
+  similarity: number;
+  chunk_index: number;
+}
+
+interface UnderwriterKnowledge {
+  id: string;
+  title: string;
+  category: string;
+  content: string;
+  similarity: number;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { question, documentId } = await request.json();
@@ -119,7 +134,7 @@ Try rephrasing your question or asking about general topics covered in insurance
     if (similarChunks && similarChunks.length > 0) {
       const documentContext = similarChunks
         .slice(0, 3)
-        .map((chunk: any) => chunk.content)
+        .map((chunk: DocumentChunk) => chunk.content)
         .join('\n\n');
       context += `POLICY DOCUMENT CONTENT:\n${documentContext}\n\n`;
     }
@@ -128,7 +143,7 @@ Try rephrasing your question or asking about general topics covered in insurance
     if (underwriterKnowledge && underwriterKnowledge.length > 0) {
       const knowledgeContext = underwriterKnowledge
         .slice(0, 2) // Top 2 most relevant knowledge items
-        .map((knowledge: any) => `UNDERWRITER INSIGHT - ${knowledge.title} (${knowledge.category}):\n${knowledge.content}`)
+        .map((knowledge: UnderwriterKnowledge) => `UNDERWRITER INSIGHT - ${knowledge.title} (${knowledge.category}):\n${knowledge.content}`)
         .join('\n\n');
       context += `EXPERT UNDERWRITER KNOWLEDGE:\n${knowledgeContext}`;
     }

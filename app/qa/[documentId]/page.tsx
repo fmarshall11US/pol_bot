@@ -15,7 +15,11 @@ interface Message {
   content: string;
   timestamp: Date;
   confidence?: 'high' | 'medium' | 'low';
-  relevantChunks?: any[];
+  relevantChunks?: Array<{
+    id: string;
+    content: string;
+    similarity: number;
+  }>;
 }
 
 interface Document {
@@ -181,9 +185,9 @@ export default function QAPage({ params }: { params: Promise<{ documentId: strin
                     <div className="mt-4 space-y-2 text-left max-w-md mx-auto">
                       <p className="text-xs font-medium">Example questions:</p>
                       <div className="space-y-1 text-xs">
-                        <p>• "What is my deductible amount?"</p>
-                        <p>• "What does this policy cover?"</p>
-                        <p>• "How do I file a claim?"</p>
+                        <p>• &ldquo;What is my deductible amount?&rdquo;</p>
+                        <p>• &ldquo;What does this policy cover?&rdquo;</p>
+                        <p>• &ldquo;How do I file a claim?&rdquo;</p>
                       </div>
                     </div>
                   </div>

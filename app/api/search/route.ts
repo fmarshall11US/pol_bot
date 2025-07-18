@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { createEmbedding } from "@/lib/openai";
 
+interface KnowledgeMatch {
+  id: string;
+  title: string;
+  category: string;
+  content: string;
+  similarity: number;
+  source: string;
+}
+
+
 export async function POST(request: NextRequest) {
   try {
     const { query } = await request.json();
@@ -40,7 +50,7 @@ export async function POST(request: NextRequest) {
     console.log('🧠 Knowledge search results:', {
       query,
       totalMatches: knowledgeMatches?.length || 0,
-      matches: knowledgeMatches?.map((m: any) => ({
+      matches: knowledgeMatches?.map((m: KnowledgeMatch) => ({
         title: m.title,
         category: m.category,
         similarity: m.similarity,

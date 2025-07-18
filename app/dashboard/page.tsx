@@ -77,11 +77,6 @@ export default function Dashboard() {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -156,7 +151,7 @@ export default function Dashboard() {
               Smart Policy Search
             </CardTitle>
             <CardDescription>
-              Describe what you need and we'll recommend policies based on expert underwriter knowledge and hints
+              Describe what you need and we&apos;ll recommend policies based on expert underwriter knowledge and hints
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -186,7 +181,7 @@ export default function Dashboard() {
                 {searchResults.length > 0 ? (
                   <div className="space-y-3">
                     <h3 className="font-medium text-gray-900 dark:text-white">
-                      Recommended Policies for "{searchQuery}":
+                      Recommended Policies for &ldquo;{searchQuery}&rdquo;:
                     </h3>
                     {searchResults.map((result) => (
                       <Card key={result.document_id} className="border-l-4 border-l-blue-500">
@@ -207,7 +202,7 @@ export default function Dashboard() {
                                 {result.match_reason}
                               </p>
                               <p className="text-xs text-gray-500 dark:text-gray-500">
-                                "{result.matched_content}"
+                                &ldquo;{result.matched_content}&rdquo;
                               </p>
                             </div>
                             <div className="flex gap-2 ml-4">

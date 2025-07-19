@@ -9,7 +9,10 @@ export async function extractTextFromPDF(fileBuffer: Buffer, originalFileName?: 
   const fileSizeKB = Math.round(fileBuffer.length / 1024);
   
   // Use AWS Textract if configured
-  if (isTextractConfigured()) {
+  const textractConfigured = isTextractConfigured();
+  console.log('🔍 AWS Textract configured:', textractConfigured);
+  
+  if (textractConfigured) {
     try {
       console.log('🔍 Using AWS Textract for PDF extraction...');
       const extractedText = await extractTextWithTextract(fileBuffer);

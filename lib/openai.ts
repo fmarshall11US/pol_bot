@@ -4,8 +4,11 @@ if (!process.env.OPENAI_API_KEY) {
   throw new Error('Missing env.OPENAI_API_KEY');
 }
 
+// Clean the API key to remove any newlines or extra whitespace
+const cleanApiKey = process.env.OPENAI_API_KEY.trim().replace(/\s+/g, '');
+
 export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: cleanApiKey,
 });
 
 export async function createEmbedding(text: string): Promise<number[]> {

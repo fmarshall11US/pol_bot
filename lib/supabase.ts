@@ -18,9 +18,12 @@ export const getSupabaseAdmin = () => {
     throw new Error('Missing env.SUPABASE_SERVICE_ROLE_KEY');
   }
   
+  // Clean up the service role key (remove any newlines or extra whitespace)
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY.replace(/\s+/g, '');
+  
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    serviceRoleKey,
     {
       auth: {
         autoRefreshToken: false,

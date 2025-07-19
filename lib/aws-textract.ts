@@ -39,18 +39,5 @@ export async function extractTextWithTextract(fileBuffer: Buffer): Promise<strin
 }
 
 export function isTextractConfigured(): boolean {
-  const hasCredentials = !!(
-    process.env.AWS_ACCESS_KEY_ID && 
-    process.env.AWS_SECRET_ACCESS_KEY && 
-    process.env.AWS_REGION
-  );
-  
-  const hasValidCredentials = !!(
-    process.env.AWS_ACCESS_KEY_ID && 
-    process.env.AWS_ACCESS_KEY_ID !== 'your_aws_access_key_id' &&
-    process.env.AWS_SECRET_ACCESS_KEY && 
-    process.env.AWS_SECRET_ACCESS_KEY !== 'your_aws_secret_access_key'
-  );
-  
-  return hasCredentials && hasValidCredentials;
+  return !!textractClient;
 }

@@ -1,17 +1,27 @@
 import { TextractClient, DetectDocumentTextCommand } from "@aws-sdk/client-textract";
 
-// Initialize AWS Textract client
-const textractClient = new TextractClient({
-  region: process.env.AWS_REGION || 'us-east-1',
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  },
-});
+// Initialize AWS Textract client only if credentials are properly configured
+let textractClient: TextractClient | null = null;
+
+if (process.env.AWS_ACCESS_KEY_ID && 
+    process.env.AWS_SECRET_ACCESS_KEY && 
+    !process.env.AWS_ACCESS_KEY_ID.includes('your_aws') && 
+    !process.env.AWS_SECRET_ACCESS_KEY.includes('your_aws')) {
+  textractClient = new TextractClient({
+    region: process.env.AWS_REGION || 'us-east-1',
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+  });
+}
 
 export async function extractTextWithTextract(fileBuffer: Buffer): Promise<string> {
+  if (!textractClient) {
+    throw new Error('AWS Textract is not configured');
+  }
+  
   try {
-    
     // Prepare the command
     const command = new DetectDocumentTextCommand({
       Document: {

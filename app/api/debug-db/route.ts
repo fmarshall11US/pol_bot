@@ -3,6 +3,24 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 
 export async function GET() {
   try {
+    // First, check environment variables
+    const envCheck = {
+      hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasSupabaseServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      hasOpenAIKey: !!process.env.OPENAI_API_KEY,
+      nodeEnv: process.env.NODE_ENV
+    };
+    
+    console.log('Environment check:', envCheck);
+    
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      return NextResponse.json({
+        error: 'Environment variables missing',
+        envCheck,
+        details: 'NEXT_PUBLIC_SUPABASE_URL is not set'
+      }, { status: 500 });
+    }
+    
     const supabase = getSupabaseAdmin();
 
     // Check if documents exist
@@ -40,6 +58,12 @@ export async function GET() {
       });
 
     const debugInfo = {
+      environment: {
+        hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+        hasSupabaseServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+        hasOpenAIKey: !!process.env.OPENAI_API_KEY,
+        nodeEnv: process.env.NODE_ENV
+      },
       documents: {
         count: documents?.length || 0,
         list: documents?.map(d => ({

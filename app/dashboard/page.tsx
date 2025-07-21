@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus, Search, Sparkles, Loader2 } from "lucide-react";
+import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus, Search, Sparkles, Loader2, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -136,6 +136,12 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="flex gap-2">
+            <a href="/smart-qa">
+              <Button className="flex items-center gap-2">
+                <Brain className="h-4 w-4" />
+                Smart Q&A
+              </Button>
+            </a>
             <a href="/test-search">
               <Button variant="outline" className="flex items-center gap-2">
                 <Search className="h-4 w-4" />
@@ -143,7 +149,7 @@ export default function Dashboard() {
               </Button>
             </a>
             <a href="/upload">
-              <Button className="flex items-center gap-2">
+              <Button variant="outline" className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
                 Upload New Policy
               </Button>

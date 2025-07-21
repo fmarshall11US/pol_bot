@@ -21,6 +21,7 @@ export default function TestSearchPage() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [debugInfo, setDebugInfo] = useState<any>(null);
 
   const testVectorSearch = async () => {
     if (!query.trim()) return;
@@ -45,11 +46,24 @@ export default function TestSearchPage() {
 
       const data = await response.json();
       setResults(data.results || []);
+      console.log('Search response:', data);
     } catch (err) {
       setError("Failed to perform search");
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const runDatabaseDebug = async () => {
+    try {
+      const response = await fetch('/api/debug-db');
+      const data = await response.json();
+      setDebugInfo(data);
+      console.log('Database debug:', data);
+    } catch (err) {
+      console.error('Debug failed:', err);
+      setError('Failed to run database debug');
     }
   };
 
@@ -111,23 +125,32 @@ export default function TestSearchPage() {
               />
             </div>
 
-            <Button 
-              onClick={testVectorSearch} 
-              disabled={loading || !query.trim()}
-              className="w-full"
-            >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Searching...
-                </>
-              ) : (
-                <>
-                  <Search className="h-4 w-4 mr-2" />
-                  Test Vector Search
-                </>
-              )}
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={testVectorSearch} 
+                disabled={loading || !query.trim()}
+                className="flex-1"
+              >
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-4 w-4 mr-2" />
+                    Test Vector Search
+                  </>
+                )}
+              </Button>
+              <Button 
+                onClick={runDatabaseDebug} 
+                variant="outline"
+                disabled={loading}
+              >
+                Debug DB
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
@@ -199,6 +222,45 @@ export default function TestSearchPage() {
               <p className="text-yellow-800 text-center">
                 No results found. Try adjusting your search query or checking if documents are properly indexed.
               </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {debugInfo && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Database Debug Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 text-sm">
+                <div>
+                  <strong>Documents:</strong> {debugInfo.documents?.count || 0} found
+                  {debugInfo.documents?.list?.length > 0 && (
+                    <ul className="ml-4 mt-2">
+                      {debugInfo.documents.list.map((doc: any, idx: number) => (
+                        <li key={idx} className="text-xs">
+                          {doc.name} (ID: {doc.id})
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                
+                <div>
+                  <strong>Document Chunks:</strong> {debugInfo.chunks?.count || 0} total, {debugInfo.chunks?.hasEmbeddings || 0} with embeddings
+                </div>
+                
+                <div>
+                  <strong>Search Function:</strong> {debugInfo.searchFunction?.exists ? '✅ Working' : '❌ Error'}
+                  {debugInfo.searchFunction?.error && (
+                    <p className="text-red-600 text-xs mt-1">{debugInfo.searchFunction.error}</p>
+                  )}
+                </div>
+                
+                <div className="mt-4 p-3 bg-gray-100 rounded text-xs">
+                  <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}

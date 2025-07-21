@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const { data: relevantChunks, error: searchError } = await supabase
       .rpc('search_document_chunks', {
         query_embedding: questionEmbedding,
-        match_count: 8, // Get more results for better context
+        match_count: 15, // Get more results for better context
         document_id_filter: null // Search ALL documents
       });
 
@@ -45,6 +45,12 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`📊 Found ${relevantChunks?.length || 0} relevant chunks`);
+    if (relevantChunks && relevantChunks.length > 0) {
+      console.log('Top 3 search results:');
+      relevantChunks.slice(0, 3).forEach((chunk: DocumentChunk, index: number) => {
+        console.log(`${index + 1}. Similarity: ${chunk.similarity.toFixed(3)}, Content: ${chunk.content.substring(0, 100)}...`);
+      });
+    }
 
     // If no relevant content found
     if (!relevantChunks || relevantChunks.length === 0) {
@@ -66,11 +72,22 @@ export async function POST(request: NextRequest) {
     const docMap = new Map(documents?.map(d => [d.id, d.file_name]) || []);
 
     // Filter chunks by similarity threshold and prepare context
-    const goodChunks = relevantChunks.filter((chunk: DocumentChunk) => chunk.similarity > 0.5);
+    // Lower threshold for better recall - insurance policy content can be complex
+    const goodChunks = relevantChunks.filter((chunk: DocumentChunk) => chunk.similarity > 0.3);
     
     if (goodChunks.length === 0) {
+      // If no good chunks, show what we did find for debugging
+      const debugInfo = relevantChunks?.slice(0, 3).map((chunk: DocumentChunk) => 
+        `Similarity: ${chunk.similarity.toFixed(3)}, Content: "${chunk.content.substring(0, 100)}..."`
+      ).join('\n') || 'No chunks found';
+      
       return NextResponse.json({
-        answer: `I found some content in your policies, but none was closely related to your question: "${question}". Try rephrasing your question or asking about specific policy terms, coverage amounts, or claim procedures.`,
+        answer: `I found some content in your policies, but none was closely related to your question: "${question}". 
+
+Here's what I found (with similarity scores):
+${debugInfo}
+
+Try rephrasing your question or asking about specific policy terms, coverage amounts, or claim procedures.`,
         sources: [],
         confidence: "low"
       });

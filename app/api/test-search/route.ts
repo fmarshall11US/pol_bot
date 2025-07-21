@@ -9,6 +9,11 @@ interface SearchResult {
   document_id: string;
 }
 
+interface AnalyzedResult extends SearchResult {
+  similarity_percentage: string;
+  relevance: 'high' | 'medium' | 'low';
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { query, documentId } = await request.json();
@@ -55,9 +60,9 @@ export async function POST(request: NextRequest) {
     })) || [];
 
     // Check if we're getting good matches
-    const highQualityMatches = analyzedResults.filter((r: any) => r.similarity > 0.7).length;
+    const highQualityMatches = analyzedResults.filter((r: AnalyzedResult) => r.similarity > 0.7).length;
     const avgSimilarity = analyzedResults.length > 0 
-      ? analyzedResults.reduce((sum: number, r: any) => sum + r.similarity, 0) / analyzedResults.length
+      ? analyzedResults.reduce((sum: number, r: AnalyzedResult) => sum + r.similarity, 0) / analyzedResults.length
       : 0;
 
     return NextResponse.json({

@@ -3,7 +3,9 @@ import { TextractClient, DetectDocumentTextCommand } from "@aws-sdk/client-textr
 // Initialize AWS Textract client only if credentials are properly configured
 let textractClient: TextractClient | null = null;
 
-if (process.env.AWS_ACCESS_KEY_ID && 
+// Disable Textract completely in production for now
+if (process.env.NODE_ENV !== 'production' && 
+    process.env.AWS_ACCESS_KEY_ID && 
     process.env.AWS_SECRET_ACCESS_KEY && 
     !process.env.AWS_ACCESS_KEY_ID.includes('your_aws') && 
     !process.env.AWS_SECRET_ACCESS_KEY.includes('your_aws')) {

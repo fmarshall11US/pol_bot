@@ -39,10 +39,12 @@ export const getSupabaseAdmin = () => {
   // Clean up the service role key (remove any newlines or extra whitespace)
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY.trim().replace(/\s+/g, '');
   
-  // Debug logging for production
-  console.log('🔍 Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-  console.log('🔍 Service key length:', serviceRoleKey.length);
-  console.log('🔍 Service key prefix:', serviceRoleKey.substring(0, 20) + '...');
+  // Debug logging (remove in production)
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('🔍 Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log('🔍 Service key length:', serviceRoleKey.length);
+    console.log('🔍 Service key prefix:', serviceRoleKey.substring(0, 20) + '...');
+  }
   
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,

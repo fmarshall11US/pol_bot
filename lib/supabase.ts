@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { getCompleteServiceRoleKey } from './supabase-key-fix';
 
 // Create a function to get the Supabase client
 export const getSupabase = () => {
@@ -36,8 +37,8 @@ export const getSupabaseAdmin = () => {
     throw new Error('Missing env.SUPABASE_SERVICE_ROLE_KEY');
   }
   
-  // Clean up the service role key (remove any newlines or extra whitespace)
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY.trim().replace(/\s+/g, '');
+  // Get the complete service role key (handles truncation issue in production)
+  const serviceRoleKey = getCompleteServiceRoleKey().trim().replace(/\s+/g, '');
   
   // Debug logging (remove in production)
   if (process.env.NODE_ENV !== 'production') {

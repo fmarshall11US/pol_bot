@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { createEmbedding } from "@/lib/openai";
 
+interface SearchResult {
+  content: string;
+  similarity: number;
+  chunk_index: number;
+  document_id: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { query, documentId } = await request.json();
@@ -40,7 +47,7 @@ export async function POST(request: NextRequest) {
     console.log(`📊 Found ${results?.length || 0} results`);
 
     // Add similarity analysis
-    const analyzedResults = results?.map(result => ({
+    const analyzedResults = results?.map((result: SearchResult) => ({
       ...result,
       similarity_percentage: (result.similarity * 100).toFixed(1),
       relevance: result.similarity > 0.8 ? 'high' : 
@@ -48,9 +55,9 @@ export async function POST(request: NextRequest) {
     })) || [];
 
     // Check if we're getting good matches
-    const highQualityMatches = analyzedResults.filter(r => r.similarity > 0.7).length;
+    const highQualityMatches = analyzedResults.filter((r: any) => r.similarity > 0.7).length;
     const avgSimilarity = analyzedResults.length > 0 
-      ? analyzedResults.reduce((sum, r) => sum + r.similarity, 0) / analyzedResults.length
+      ? analyzedResults.reduce((sum: number, r: any) => sum + r.similarity, 0) / analyzedResults.length
       : 0;
 
     return NextResponse.json({

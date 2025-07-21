@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+// Removed Progress import - using custom progress bar
 
 interface SearchResult {
   content: string;
@@ -172,10 +172,12 @@ export default function TestSearchPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="mb-2">
-                    <Progress 
-                      value={result.similarity * 100} 
-                      className="h-2"
-                    />
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-blue-600 h-2 rounded-full transition-all"
+                        style={{ width: `${result.similarity * 100}%` }}
+                      />
+                    </div>
                   </div>
                   <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
                     {result.content}

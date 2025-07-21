@@ -33,7 +33,7 @@ export async function GET() {
     }));
     
     // Search for deductible-related content
-    const { data: deductibleChunks, error: searchError } = await supabase
+    const { data: deductibleChunks } = await supabase
       .from('document_chunks')
       .select('content')
       .or('content.ilike.%deductible%,content.ilike.%collision%')

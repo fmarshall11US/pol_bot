@@ -96,7 +96,7 @@ export default function SmartQAPage() {
               Ask Your Question
             </CardTitle>
             <CardDescription>
-              Ask natural questions like "What is my collision deductible?" or "How long do I have to report a claim?"
+              Ask natural questions like &quot;What is my collision deductible?&quot; or &quot;How long do I have to report a claim?&quot;
             </CardDescription>
           </CardHeader>
           <CardContent>

@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     // Build comprehensive context from the best chunks
     const contextChunks = goodChunks.slice(0, 5); // Top 5 most relevant
     const context = contextChunks
-      .map((chunk) => {
+      .map((chunk: DocumentChunk) => {
         const docName = docMap.get(chunk.document_id) || 'Unknown Document';
         return `[${docName} - Section ${chunk.chunk_index + 1}]:\n${chunk.content}`;
       })

@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { createEmbedding, generateAnswer } from "@/lib/openai";
 
+interface DocumentChunk {
+  document_id: string;
+  content: string;
+  similarity: number;
+  chunk_index: number;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { question } = await request.json();
@@ -49,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get document names for the relevant chunks
-    const documentIds = [...new Set(relevantChunks.map(chunk => chunk.document_id))];
+    const documentIds = [...new Set(relevantChunks.map((chunk: DocumentChunk) => chunk.document_id))];
     const { data: documents } = await supabase
       .from('documents')
       .select('id, file_name')
@@ -59,7 +66,7 @@ export async function POST(request: NextRequest) {
     const docMap = new Map(documents?.map(d => [d.id, d.file_name]) || []);
 
     // Filter chunks by similarity threshold and prepare context
-    const goodChunks = relevantChunks.filter(chunk => chunk.similarity > 0.5);
+    const goodChunks = relevantChunks.filter((chunk: DocumentChunk) => chunk.similarity > 0.5);
     
     if (goodChunks.length === 0) {
       return NextResponse.json({
@@ -103,7 +110,7 @@ Please provide a comprehensive answer based on the policy information above:`;
     const answer = await generateAnswer(question, enhancedPrompt);
 
     // Prepare source information
-    const sources = contextChunks.map(chunk => ({
+    const sources = contextChunks.map((chunk: DocumentChunk) => ({
       document: docMap.get(chunk.document_id) || 'Unknown Document',
       section: `Section ${chunk.chunk_index + 1}`,
       content: chunk.content.substring(0, 200) + '...',

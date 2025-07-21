@@ -75,7 +75,8 @@ export async function POST() {
     }
 
     // Test 5: Test database insertion
-    const testDocId = 'test-debug-' + Date.now();
+    // Generate a proper UUID for testing
+    const testDocId = crypto.randomUUID();
     try {
       const { error: docError } = await supabase
         .from('documents')

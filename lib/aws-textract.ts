@@ -49,5 +49,9 @@ export async function extractTextWithTextract(fileBuffer: Buffer): Promise<strin
 }
 
 export function isTextractConfigured(): boolean {
+  // Disable Textract for production deployment
+  if (process.env.NODE_ENV === 'production') {
+    return false;
+  }
   return !!textractClient;
 }

@@ -21,7 +21,11 @@ export default function TestSearchPage() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [debugInfo, setDebugInfo] = useState<any>(null);
+  const [debugInfo, setDebugInfo] = useState<{
+    documents?: { count: number; list: { name: string; id: string }[] };
+    chunks?: { count: number; hasEmbeddings: number };
+    searchFunction?: { exists: boolean; error?: string };
+  } | null>(null);
 
   const testVectorSearch = async () => {
     if (!query.trim()) return;
@@ -235,9 +239,9 @@ export default function TestSearchPage() {
               <div className="space-y-4 text-sm">
                 <div>
                   <strong>Documents:</strong> {debugInfo.documents?.count || 0} found
-                  {debugInfo.documents?.list?.length > 0 && (
+                  {debugInfo.documents?.list && debugInfo.documents.list.length > 0 && (
                     <ul className="ml-4 mt-2">
-                      {debugInfo.documents.list.map((doc: any, idx: number) => (
+                      {debugInfo.documents.list.map((doc: { name: string; id: string }, idx: number) => (
                         <li key={idx} className="text-xs">
                           {doc.name} (ID: {doc.id})
                         </li>

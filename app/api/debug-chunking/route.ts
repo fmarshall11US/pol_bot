@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { processDocument, splitTextIntoChunks } from "@/lib/document-processor";
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // Test sample insurance document
     const sampleText = `HOMEOWNER'S INSURANCE POLICY
@@ -29,7 +29,24 @@ We will pay the necessary medical expenses that are incurred or medically ascert
         sentences: sampleText.match(/[^.!?]+[.!?]+/g)?.length || 0,
         paragraphs: sampleText.split('\n\n').length
       },
-      chunking: {}
+      chunking: {} as Record<string, {
+        chunkCount: number;
+        avgChunkSize: number;
+        chunks: Array<{
+          index: number;
+          length: number;
+          preview: string;
+        }>;
+      }>,
+      documentProcessing: {
+        chunkCount: 0,
+        chunks: [] as Array<{
+          index: number;
+          length: number;
+          preview: string;
+          firstWords: string;
+        }>
+      }
     };
 
     // Test different chunk sizes

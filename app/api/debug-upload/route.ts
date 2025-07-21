@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { createEmbedding } from "@/lib/openai";
 import { processDocument } from "@/lib/document-processor";
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     console.log('🚀 Starting debug upload process...');
 
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     // Test 2: Test Supabase connection
     const supabase = getSupabaseAdmin();
-    const { data: testQuery, error: testError } = await supabase
+    const { error: testError } = await supabase
       .from('documents')
       .select('id')
       .limit(1);

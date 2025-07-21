@@ -5,11 +5,11 @@ export async function GET() {
   try {
     const supabase = getSupabaseAdmin();
     const results = {
-      pgvectorExtension: null,
-      tablesExist: {},
-      vectorColumn: null,
-      searchFunction: null,
-      errors: []
+      pgvectorExtension: null as { installed: boolean; error?: string } | null,
+      tablesExist: {} as Record<string, { exists: boolean; error?: string }>,
+      vectorColumn: null as { exists: boolean; details?: unknown; error?: string; note?: string } | null,
+      searchFunction: null as { exists: boolean; error?: string; testResult?: number } | null,
+      errors: [] as string[]
     };
 
     // Check if pgvector extension is installed
@@ -23,7 +23,7 @@ export async function GET() {
         installed: !extError && extensions && extensions.length > 0,
         error: extError?.message
       };
-    } catch (err) {
+    } catch {
       results.errors.push('Failed to check pgvector extension');
     }
 
@@ -31,7 +31,7 @@ export async function GET() {
     const tables = ['documents', 'document_chunks', 'questions', 'feedback'];
     for (const table of tables) {
       try {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from(table)
           .select('*')
           .limit(0);
@@ -65,10 +65,10 @@ export async function GET() {
         details: columnInfo,
         error: colError?.message
       };
-    } catch (err) {
+    } catch {
       // Alternative check using a direct query
       try {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('document_chunks')
           .select('embedding')
           .limit(1);

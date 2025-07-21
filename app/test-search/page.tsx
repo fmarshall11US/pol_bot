@@ -71,6 +71,18 @@ export default function TestSearchPage() {
     }
   };
 
+  const testEmbedding = async () => {
+    try {
+      const response = await fetch('/api/debug-embedding', { method: 'POST' });
+      const data = await response.json();
+      console.log('Embedding test:', data);
+      alert(`Embedding test: ${data.diagnosis?.correctLength ? '✅ Correct length' : '❌ Wrong length'} (${data.embedding?.length} dimensions)`);
+    } catch (err) {
+      console.error('Embedding test failed:', err);
+      setError('Failed to test embedding');
+    }
+  };
+
   const getSimilarityColor = (similarity: number) => {
     if (similarity > 0.8) return "text-green-600";
     if (similarity > 0.6) return "text-yellow-600";
@@ -151,8 +163,17 @@ export default function TestSearchPage() {
                 onClick={runDatabaseDebug} 
                 variant="outline"
                 disabled={loading}
+                size="sm"
               >
                 Debug DB
+              </Button>
+              <Button 
+                onClick={testEmbedding} 
+                variant="outline"
+                disabled={loading}
+                size="sm"
+              >
+                Test Embed
               </Button>
             </div>
           </CardContent>

@@ -102,6 +102,23 @@ export default function TestSearchPage() {
     }
   };
 
+  const testSchema = async () => {
+    try {
+      const response = await fetch('/api/debug-schema');
+      const data = await response.json();
+      console.log('Schema test:', data);
+      const issues = data.diagnosis?.filter((d: string) => d.includes('❌')).length || 0;
+      if (issues === 0) {
+        alert('✅ Database schema is properly configured!');
+      } else {
+        alert(`❌ Found ${issues} database issues. Check console for details.`);
+      }
+    } catch (err) {
+      console.error('Schema test failed:', err);
+      setError('Failed to test database schema');
+    }
+  };
+
   const getSimilarityColor = (similarity: number) => {
     if (similarity > 0.8) return "text-green-600";
     if (similarity > 0.6) return "text-yellow-600";
@@ -160,11 +177,11 @@ export default function TestSearchPage() {
               />
             </div>
 
-            <div className="flex gap-2">
+            <div className="space-y-2">
               <Button 
                 onClick={testVectorSearch} 
                 disabled={loading || !query.trim()}
-                className="flex-1"
+                className="w-full"
               >
                 {loading ? (
                   <>
@@ -178,30 +195,40 @@ export default function TestSearchPage() {
                   </>
                 )}
               </Button>
-              <Button 
-                onClick={runDatabaseDebug} 
-                variant="outline"
-                disabled={loading}
-                size="sm"
-              >
-                Debug DB
-              </Button>
-              <Button 
-                onClick={testEmbedding} 
-                variant="outline"
-                disabled={loading}
-                size="sm"
-              >
-                Test Embed
-              </Button>
-              <Button 
-                onClick={testUpload} 
-                variant="outline"
-                disabled={loading}
-                size="sm"
-              >
-                Test Upload
-              </Button>
+              <div className="grid grid-cols-2 gap-2">
+                <Button 
+                  onClick={runDatabaseDebug} 
+                  variant="outline"
+                  disabled={loading}
+                  size="sm"
+                >
+                  Debug DB
+                </Button>
+                <Button 
+                  onClick={testEmbedding} 
+                  variant="outline"
+                  disabled={loading}
+                  size="sm"
+                >
+                  Test Embed
+                </Button>
+                <Button 
+                  onClick={testUpload} 
+                  variant="outline"
+                  disabled={loading}
+                  size="sm"
+                >
+                  Test Upload
+                </Button>
+                <Button 
+                  onClick={testSchema} 
+                  variant="outline"
+                  disabled={loading}
+                  size="sm"
+                >
+                  Test Schema
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

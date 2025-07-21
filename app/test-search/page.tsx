@@ -119,6 +119,23 @@ export default function TestSearchPage() {
     }
   };
 
+  const testChunking = async () => {
+    try {
+      const response = await fetch('/api/debug-chunking', { method: 'POST' });
+      const data = await response.json();
+      console.log('Chunking test:', data);
+      const issues = data.analysis?.filter((a: string) => a.includes('❌')).length || 0;
+      if (issues === 0) {
+        alert(`✅ Chunking working correctly! Creates ${data.documentProcessing?.chunkCount || 0} chunks.`);
+      } else {
+        alert(`❌ Found ${issues} chunking issues. Check console for details.`);
+      }
+    } catch (err) {
+      console.error('Chunking test failed:', err);
+      setError('Failed to test chunking');
+    }
+  };
+
   const getSimilarityColor = (similarity: number) => {
     if (similarity > 0.8) return "text-green-600";
     if (similarity > 0.6) return "text-yellow-600";
@@ -195,7 +212,7 @@ export default function TestSearchPage() {
                   </>
                 )}
               </Button>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <Button 
                   onClick={runDatabaseDebug} 
                   variant="outline"
@@ -227,6 +244,14 @@ export default function TestSearchPage() {
                   size="sm"
                 >
                   Test Schema
+                </Button>
+                <Button 
+                  onClick={testChunking} 
+                  variant="outline"
+                  disabled={loading}
+                  size="sm"
+                >
+                  Test Chunks
                 </Button>
               </div>
             </div>

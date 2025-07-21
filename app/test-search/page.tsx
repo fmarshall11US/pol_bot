@@ -83,6 +83,25 @@ export default function TestSearchPage() {
     }
   };
 
+  const testUpload = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/debug-upload', { method: 'POST' });
+      const data = await response.json();
+      console.log('Upload test:', data);
+      if (data.success) {
+        alert('✅ Upload system working correctly!');
+      } else {
+        setError(`Upload test failed: ${data.error}`);
+      }
+    } catch (err) {
+      console.error('Upload test failed:', err);
+      setError('Failed to test upload system');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getSimilarityColor = (similarity: number) => {
     if (similarity > 0.8) return "text-green-600";
     if (similarity > 0.6) return "text-yellow-600";
@@ -174,6 +193,14 @@ export default function TestSearchPage() {
                 size="sm"
               >
                 Test Embed
+              </Button>
+              <Button 
+                onClick={testUpload} 
+                variant="outline"
+                disabled={loading}
+                size="sm"
+              >
+                Test Upload
               </Button>
             </div>
           </CardContent>

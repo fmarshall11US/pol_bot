@@ -1,18 +1,44 @@
 import OpenAI from 'openai';
 
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error('Missing env.OPENAI_API_KEY');
-}
+// Create a function to get the OpenAI client
+const getOpenAIClient = () => {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('Missing env.OPENAI_API_KEY');
+  }
 
-// Clean the API key to remove any newlines or extra whitespace
-const cleanApiKey = process.env.OPENAI_API_KEY.trim().replace(/\s+/g, '');
+  // Clean the API key to remove any newlines or extra whitespace
+  const cleanApiKey = process.env.OPENAI_API_KEY.trim().replace(/\s+/g, '');
 
-export const openai = new OpenAI({
-  apiKey: cleanApiKey,
-});
+  return new OpenAI({
+    apiKey: cleanApiKey,
+  });
+};
+
+// Lazy-loaded OpenAI client
+let openaiClient: OpenAI | null = null;
+
+const getOpenAI = () => {
+  if (!openaiClient) {
+    openaiClient = getOpenAIClient();
+  }
+  return openaiClient;
+};
+
+// For backward compatibility - simplified interface
+export const openai = {
+  embeddings: {
+    create: (params: Parameters<OpenAI['embeddings']['create']>[0]) => getOpenAI().embeddings.create(params)
+  },
+  chat: {
+    completions: {
+      create: (params: Parameters<OpenAI['chat']['completions']['create']>[0]) => getOpenAI().chat.completions.create(params)
+    }
+  }
+};
 
 export async function createEmbedding(text: string): Promise<number[]> {
-  const response = await openai.embeddings.create({
+  const client = getOpenAI();
+  const response = await client.embeddings.create({
     model: "text-embedding-ada-002",
     input: text,
   });
@@ -24,7 +50,8 @@ export async function generateAnswer(
   question: string,
   context: string
 ): Promise<string> {
-  const response = await openai.chat.completions.create({
+  const client = getOpenAI();
+  const response = await client.chat.completions.create({
     model: "gpt-4-turbo-preview",
     messages: [
       {

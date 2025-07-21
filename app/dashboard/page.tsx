@@ -135,25 +135,27 @@ export default function Dashboard() {
               Manage and analyze your insurance policies
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <a href="/smart-qa">
-              <Button className="flex items-center gap-2">
-                <Brain className="h-4 w-4" />
-                Smart Q&A
+              <Button size="lg" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+                <Brain className="h-5 w-5" />
+                🧠 Ask AI Questions
               </Button>
             </a>
-            <a href="/test-search">
-              <Button variant="outline" className="flex items-center gap-2">
-                <Search className="h-4 w-4" />
-                Test Search
-              </Button>
-            </a>
-            <a href="/upload">
-              <Button variant="outline" className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Upload New Policy
-              </Button>
-            </a>
+            <div className="flex gap-2">
+              <a href="/test-search">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Search className="h-4 w-4" />
+                  Test Search
+                </Button>
+              </a>
+              <a href="/upload">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Upload Policy
+                </Button>
+              </a>
+            </div>
           </div>
         </div>
 

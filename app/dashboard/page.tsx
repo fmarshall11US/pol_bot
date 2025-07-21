@@ -135,12 +135,20 @@ export default function Dashboard() {
               Manage and analyze your insurance policies
             </p>
           </div>
-          <a href="/upload">
-            <Button className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Upload New Policy
-            </Button>
-          </a>
+          <div className="flex gap-2">
+            <a href="/test-search">
+              <Button variant="outline" className="flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Test Search
+              </Button>
+            </a>
+            <a href="/upload">
+              <Button className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Upload New Policy
+              </Button>
+            </a>
+          </div>
         </div>
 
         {/* Smart Policy Search */}

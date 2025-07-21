@@ -42,7 +42,7 @@ export async function GET() {
           success: !searchError,
           error: searchError?.message,
           resultCount: searchResults?.length || 0,
-          results: searchResults?.map(r => ({
+          results: searchResults?.map((r: any) => ({
             content: r.content.substring(0, 100) + '...',
             similarity: r.similarity
           })) || []

@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { createEmbedding } from "@/lib/openai";
 
+interface SearchResult {
+  content: string;
+  similarity: number;
+}
+
 export async function GET() {
   try {
     const supabase = getSupabaseAdmin();
@@ -42,7 +47,7 @@ export async function GET() {
           success: !searchError,
           error: searchError?.message,
           resultCount: searchResults?.length || 0,
-          results: searchResults?.map((r: any) => ({
+          results: searchResults?.map((r: SearchResult) => ({
             content: r.content.substring(0, 100) + '...',
             similarity: r.similarity
           })) || []

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus, Search, Sparkles, Loader2, Brain, Settings, Wrench, RefreshCw, Shield } from "lucide-react";
+import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus, Search, Sparkles, Loader2, Brain, Settings, Wrench, RefreshCw, Shield, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -143,6 +143,12 @@ export default function Dashboard() {
               </Button>
             </a>
             <div className="flex gap-2">
+              <a href="/setup-database">
+                <Button variant="outline" className="flex items-center gap-2 text-blue-600 border-blue-600 hover:bg-blue-50">
+                  <Database className="h-4 w-4" />
+                  Setup Database
+                </Button>
+              </a>
               <a href="/search-settings">
                 <Button variant="outline" className="flex items-center gap-2">
                   <Settings className="h-4 w-4" />

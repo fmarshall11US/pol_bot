@@ -8,6 +8,20 @@ export interface TextChunk {
 export async function extractTextFromPDF(fileBuffer: Buffer, originalFileName?: string): Promise<string> {
   const fileSizeKB = Math.round(fileBuffer.length / 1024);
   
+  // Try PDF.js extraction first (free and reliable)
+  try {
+    const { extractTextFromPDFNode } = await import('./pdf-extractor');
+    console.log('🔍 Using PDF.js for text extraction...');
+    const extractedText = await extractTextFromPDFNode(fileBuffer);
+    
+    if (extractedText && extractedText.trim().length > 0) {
+      console.log('✅ Successfully extracted', extractedText.length, 'characters from PDF');
+      return extractedText;
+    }
+  } catch (error) {
+    console.log('⚠️ PDF.js extraction failed:', error);
+  }
+  
   // Use AWS Textract if configured
   const textractConfigured = isTextractConfigured();
   console.log('🔍 AWS Textract configured:', textractConfigured);

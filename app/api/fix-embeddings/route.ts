@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { createEmbedding } from "@/lib/openai";
 

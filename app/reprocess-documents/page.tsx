@@ -150,15 +150,15 @@ export default function ReprocessDocumentsPage() {
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-2">
                 <span className="text-blue-600">•</span>
-                <span>"What happens if I acquire a replacement auto?"</span>
+                <span>&ldquo;What happens if I acquire a replacement auto?&rdquo;</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-600">•</span>
-                <span>"How long do I have to notify about a new car?"</span>
+                <span>&ldquo;How long do I have to notify about a new car?&rdquo;</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-600">•</span>
-                <span>"What are the notification requirements for policy changes?"</span>
+                <span>&ldquo;What are the notification requirements for policy changes?&rdquo;</span>
               </li>
             </ul>
           </CardContent>

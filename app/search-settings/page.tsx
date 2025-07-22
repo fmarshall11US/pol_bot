@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings, Brain, Target, BarChart3, Save } from "lucide-react";
+import { Brain, Target, BarChart3, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -57,10 +57,10 @@ export default function SearchSettingsPage() {
       if (response.ok) {
         setMessage("✅ Settings saved successfully!");
       } else {
-        const error = await response.json();
-        setMessage(`❌ Error: ${error.error}`);
+        const errorData = await response.json();
+        setMessage(`❌ Error: ${errorData.error}`);
       }
-    } catch (error) {
+    } catch {
       setMessage("❌ Failed to save settings");
     } finally {
       setSaving(false);

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // In a real app, this would be stored in a database per user
-let searchSettings = {
+const searchSettings = {
   similarityThreshold: 0.3,
   maxResults: 15,
   contextChunks: 5
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       settings: searchSettings
     });
     
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Invalid request data" },
       { status: 400 }

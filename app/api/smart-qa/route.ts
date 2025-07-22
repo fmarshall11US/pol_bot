@@ -21,6 +21,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get current search settings
+    const settingsResponse = await fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'http://localhost:3000'}/api/search-settings`);
+    const searchSettings = await settingsResponse.json();
+    const { similarityThreshold = 0.3, maxResults = 15, contextChunks: maxContextChunks = 5 } = searchSettings;
+
+    console.log('🎯 Using search settings:', { similarityThreshold, maxResults, maxContextChunks });
+
     const supabase = getSupabaseAdmin();
 
     // Generate embedding for the question
@@ -32,7 +39,7 @@ export async function POST(request: NextRequest) {
     const { data: relevantChunks, error: searchError } = await supabase
       .rpc('search_document_chunks', {
         query_embedding: questionEmbedding,
-        match_count: 15, // Get more results for better context
+        match_count: maxResults, // Use configurable max results
         document_id_filter: null // Search ALL documents
       });
 
@@ -72,8 +79,7 @@ export async function POST(request: NextRequest) {
     const docMap = new Map(documents?.map(d => [d.id, d.file_name]) || []);
 
     // Filter chunks by similarity threshold and prepare context
-    // Lower threshold for better recall - insurance policy content can be complex
-    const goodChunks = relevantChunks.filter((chunk: DocumentChunk) => chunk.similarity > 0.3);
+    const goodChunks = relevantChunks.filter((chunk: DocumentChunk) => chunk.similarity > similarityThreshold);
     
     if (goodChunks.length === 0) {
       // If no good chunks, show what we did find for debugging
@@ -94,7 +100,7 @@ Try rephrasing your question or asking about specific policy terms, coverage amo
     }
 
     // Build comprehensive context from the best chunks
-    const contextChunks = goodChunks.slice(0, 5); // Top 5 most relevant
+    const contextChunks = goodChunks.slice(0, maxContextChunks); // Use configurable number of context chunks
     const context = contextChunks
       .map((chunk: DocumentChunk) => {
         const docName = docMap.get(chunk.document_id) || 'Unknown Document';

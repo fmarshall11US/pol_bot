@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Shield, Search, Edit3, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
+import { Shield, Search, ToggleLeft, ToggleRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +30,22 @@ export default function OverrideManagementPage() {
   const [showInactive, setShowInactive] = useState(false);
 
   useEffect(() => {
-    fetchOverrides();
+    const loadOverrides = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/expert-overrides?active=${!showInactive}`);
+        if (response.ok) {
+          const data = await response.json();
+          setOverrides(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch overrides:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadOverrides();
   }, [showInactive]);
 
   const fetchOverrides = async () => {

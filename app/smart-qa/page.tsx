@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Send, Brain, FileText, TrendingUp, Shield, Edit3, X } from "lucide-react";
+import { Send, Brain, FileText, TrendingUp, Shield, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

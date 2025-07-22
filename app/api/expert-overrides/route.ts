@@ -152,7 +152,7 @@ export async function PATCH(request: NextRequest) {
     }
     
     // Prepare update object
-    const updateData: any = {};
+    const updateData: Record<string, any> = {};
     if (correctedAnswer !== undefined) updateData.corrected_answer = correctedAnswer;
     if (expertExplanation !== undefined) updateData.expert_explanation = expertExplanation;
     if (confidenceThreshold !== undefined) updateData.confidence_threshold = confidenceThreshold;

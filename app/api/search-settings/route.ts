@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // In a real app, this would be stored in a database per user
-const searchSettings = {
+let searchSettings = {
   similarityThreshold: 0.3,
   maxResults: 15,
   contextChunks: 5

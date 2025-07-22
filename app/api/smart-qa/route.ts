@@ -21,9 +21,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get current search settings
-    const settingsResponse = await fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'http://localhost:3000'}/api/search-settings`);
-    const searchSettings = await settingsResponse.json();
+    // Get current search settings (use internal call in production)
+    let searchSettings = { similarityThreshold: 0.3, maxResults: 15, contextChunks: 5 };
+    
+    try {
+      if (process.env.NODE_ENV === 'development') {
+        const settingsResponse = await fetch('http://localhost:3000/api/search-settings');
+        if (settingsResponse.ok) {
+          searchSettings = await settingsResponse.json();
+        }
+      } else {
+        // In production, import the settings directly to avoid fetch issues
+        const { GET } = await import('../search-settings/route');
+        const response = await GET();
+        const responseData = await response.json();
+        searchSettings = responseData;
+      }
+    } catch (error) {
+      console.log('⚠️ Using default search settings due to fetch error:', error);
+    }
+    
     const { similarityThreshold = 0.3, maxResults = 15, contextChunks: maxContextChunks = 5 } = searchSettings;
 
     console.log('🎯 Using search settings:', { similarityThreshold, maxResults, maxContextChunks });

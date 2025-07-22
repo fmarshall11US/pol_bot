@@ -54,6 +54,13 @@ LIMITS OF LIABILITY
 - Comprehensive Deductible: $500
 - Collision Deductible: $1,000
 
+POLICY CHANGES
+Changes to Your Policy
+This policy contains all the agreements between you and us. Its terms may not be changed or waived except by endorsement issued by us. If a change requires a premium adjustment, we will adjust the premium as of the effective date of change.
+
+Notification Requirements
+You must tell us within 60 days when you acquire an additional or replacement auto. We will provide coverage for the additional or replacement auto only if you notify us within this time period. If you fail to notify us within 60 days, coverage for the additional or replacement auto will not be provided.
+
 EXCLUSIONS
 We do not provide Liability Coverage for any "insured":
 1. Who intentionally causes "bodily injury" or "property damage"

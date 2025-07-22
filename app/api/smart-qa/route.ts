@@ -11,7 +11,7 @@ interface DocumentChunk {
 
 export async function POST(request: NextRequest) {
   try {
-    const { question } = await request.json();
+    const { question, documentIds } = await request.json();
     console.log('🤔 Smart Q&A Request:', { question });
 
     if (!question) {
@@ -19,6 +19,53 @@ export async function POST(request: NextRequest) {
         { error: "Question is required" },
         { status: 400 }
       );
+    }
+
+    // First, check for expert overrides
+    console.log('🔍 Checking for expert overrides...');
+    try {
+      // Import the search function directly to avoid fetch issues
+      const { POST: searchOverrides } = await import('../expert-overrides/search/route');
+      const searchRequest = new NextRequest(new URL('http://localhost:3000/api/expert-overrides/search'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          question, 
+          documentIds,
+          similarityThreshold: 0.85
+        })
+      });
+      
+      const overrideResponse = await searchOverrides(searchRequest);
+      
+      if (overrideResponse.ok) {
+        const overrideData = await overrideResponse.json();
+        if (overrideData.found && overrideData.override) {
+          console.log('✅ Using expert override');
+          return NextResponse.json({
+            answer: overrideData.override.corrected_answer,
+            sources: [{
+              document: 'Expert Override',
+              section: 'Expert Knowledge',
+              content: overrideData.override.expert_explanation || 'This answer has been verified and corrected by an expert.',
+              similarity: Math.round(overrideData.override.similarity * 100),
+              relevance: 'Expert'
+            }],
+            confidence: "expert",
+            searchResults: 1,
+            documentsSearched: 0,
+            isExpertOverride: true,
+            overrideDetails: {
+              originalQuestion: overrideData.override.original_question,
+              timesUsed: overrideData.override.times_used,
+              similarity: overrideData.override.similarity
+            }
+          });
+        }
+      }
+    } catch (overrideError) {
+      console.error('Error checking overrides:', overrideError);
+      // Continue with normal AI processing if override check fails
     }
 
     // Get current search settings (use internal call in production)
@@ -170,7 +217,9 @@ Please provide a comprehensive answer based on the policy information above:`;
       sources,
       confidence,
       searchResults: contextChunks.length,
-      documentsSearched: documentIds.length
+      documentsSearched: documentIds.length,
+      originalQuestion: question,
+      isExpertOverride: false
     });
 
   } catch (error) {

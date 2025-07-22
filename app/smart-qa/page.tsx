@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Send, Brain, FileText, TrendingUp } from "lucide-react";
+import { Send, Brain, FileText, TrendingUp, Shield, Edit3, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 interface Source {
   document: string;
@@ -21,6 +24,13 @@ interface QAResponse {
   confidence: string;
   searchResults: number;
   documentsSearched: number;
+  originalQuestion?: string;
+  isExpertOverride?: boolean;
+  overrideDetails?: {
+    originalQuestion: string;
+    timesUsed: number;
+    similarity: number;
+  };
 }
 
 export default function SmartQAPage() {
@@ -28,6 +38,14 @@ export default function SmartQAPage() {
   const [response, setResponse] = useState<QAResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showOverrideDialog, setShowOverrideDialog] = useState(false);
+  const [overrideForm, setOverrideForm] = useState({
+    correctedAnswer: "",
+    expertExplanation: "",
+    confidenceThreshold: 0.85,
+    appliesToAllDocuments: false
+  });
+  const [overrideSaving, setOverrideSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +90,55 @@ export default function SmartQAPage() {
       case 'High': return 'bg-green-100 text-green-800';
       case 'Medium': return 'bg-yellow-100 text-yellow-800';
       case 'Low': return 'bg-orange-100 text-orange-800';
+      case 'Expert': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const handleOverrideClick = () => {
+    if (response) {
+      setOverrideForm({
+        correctedAnswer: response.answer,
+        expertExplanation: "",
+        confidenceThreshold: 0.85,
+        appliesToAllDocuments: false
+      });
+      setShowOverrideDialog(true);
+    }
+  };
+
+  const handleOverrideSave = async () => {
+    if (!response || !overrideForm.correctedAnswer.trim()) return;
+
+    setOverrideSaving(true);
+    try {
+      const res = await fetch("/api/expert-overrides", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          originalQuestion: response.originalQuestion || question,
+          originalAnswer: response.answer,
+          correctedAnswer: overrideForm.correctedAnswer,
+          expertExplanation: overrideForm.expertExplanation,
+          expertId: "current-user", // TODO: Use actual user ID when auth is implemented
+          confidenceThreshold: overrideForm.confidenceThreshold,
+          appliesToAllDocuments: overrideForm.appliesToAllDocuments,
+          documentIds: [] // TODO: Pass actual document IDs if needed
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to save override");
+      }
+
+      setShowOverrideDialog(false);
+      // Show success message
+      setError(""); // Clear any existing error
+    } catch (err) {
+      console.error("Override save error:", err);
+      setError("Failed to save override. Please try again.");
+    } finally {
+      setOverrideSaving(false);
     }
   };
 
@@ -136,24 +202,67 @@ export default function SmartQAPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
-                    <Brain className="h-5 w-5" />
-                    Answer
+                    {response.isExpertOverride ? (
+                      <>
+                        <Shield className="h-5 w-5 text-purple-600" />
+                        Expert Answer
+                      </>
+                    ) : (
+                      <>
+                        <Brain className="h-5 w-5" />
+                        Answer
+                      </>
+                    )}
                   </CardTitle>
                   <div className="flex items-center gap-2">
+                    {response.isExpertOverride && (
+                      <Badge className="bg-purple-100 text-purple-800">
+                        Expert Verified
+                      </Badge>
+                    )}
                     <Badge className={getConfidenceColor(response.confidence)}>
                       {response.confidence} confidence
                     </Badge>
                     <Badge variant="outline">
                       {response.searchResults} results
                     </Badge>
+                    {!response.isExpertOverride && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleOverrideClick}
+                        className="flex items-center gap-1"
+                      >
+                        <Edit3 className="h-3 w-3" />
+                        Override
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="prose max-w-none">
-                  <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                    {response.answer}
-                  </p>
+                <div className="space-y-4">
+                  {response.isExpertOverride && response.overrideDetails && (
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                      <div className="flex items-start gap-3">
+                        <Shield className="h-5 w-5 text-purple-600 mt-0.5" />
+                        <div className="text-sm">
+                          <p className="font-medium text-purple-900">
+                            This is an expert-verified answer
+                          </p>
+                          <p className="text-purple-700 mt-1">
+                            Used {response.overrideDetails.timesUsed} times • 
+                            {Math.round(response.overrideDetails.similarity * 100)}% match to original question
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div className="prose max-w-none">
+                    <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                      {response.answer}
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -255,6 +364,113 @@ export default function SmartQAPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Override Dialog */}
+        <Dialog open={showOverrideDialog} onOpenChange={setShowOverrideDialog}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-purple-600" />
+                Override AI Answer with Expert Correction
+              </DialogTitle>
+              <DialogDescription>
+                Provide an expert correction that will be used for similar future questions
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label>Original Question</Label>
+                <div className="p-3 bg-gray-50 rounded-md">
+                  <p className="text-sm">{response?.originalQuestion || question}</p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="correctedAnswer">Corrected Answer *</Label>
+                <Textarea
+                  id="correctedAnswer"
+                  value={overrideForm.correctedAnswer}
+                  onChange={(e) => setOverrideForm(prev => ({ ...prev, correctedAnswer: e.target.value }))}
+                  placeholder="Enter the correct answer that should be shown for this and similar questions"
+                  className="min-h-[150px]"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="expertExplanation">Expert Explanation</Label>
+                <Textarea
+                  id="expertExplanation"
+                  value={overrideForm.expertExplanation}
+                  onChange={(e) => setOverrideForm(prev => ({ ...prev, expertExplanation: e.target.value }))}
+                  placeholder="Explain why this correction is needed (optional)"
+                  className="min-h-[100px]"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confidenceThreshold">Similarity Threshold</Label>
+                <div className="flex items-center gap-4">
+                  <Input
+                    id="confidenceThreshold"
+                    type="number"
+                    min="0.5"
+                    max="1"
+                    step="0.05"
+                    value={overrideForm.confidenceThreshold}
+                    onChange={(e) => setOverrideForm(prev => ({ 
+                      ...prev, 
+                      confidenceThreshold: parseFloat(e.target.value) || 0.85 
+                    }))}
+                    className="w-24"
+                  />
+                  <span className="text-sm text-gray-600">
+                    Questions must be {Math.round(overrideForm.confidenceThreshold * 100)}% similar to trigger this override
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="appliesToAll"
+                  checked={overrideForm.appliesToAllDocuments}
+                  onChange={(e) => setOverrideForm(prev => ({ 
+                    ...prev, 
+                    appliesToAllDocuments: e.target.checked 
+                  }))}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="appliesToAll" className="font-normal cursor-pointer">
+                  Apply this override to questions across all documents
+                </Label>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowOverrideDialog(false)}
+                disabled={overrideSaving}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleOverrideSave}
+                disabled={overrideSaving || !overrideForm.correctedAnswer.trim()}
+              >
+                {overrideSaving ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                    Saving...
+                  </div>
+                ) : (
+                  "Save Override"
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus, Search, Sparkles, Loader2, Brain, Settings, Wrench, RefreshCw } from "lucide-react";
+import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus, Search, Sparkles, Loader2, Brain, Settings, Wrench, RefreshCw, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -159,6 +159,12 @@ export default function Dashboard() {
                 <Button variant="outline" className="flex items-center gap-2 text-orange-600 border-orange-600 hover:bg-orange-50">
                   <Wrench className="h-4 w-4" />
                   Fix Embeddings
+                </Button>
+              </a>
+              <a href="/override-management">
+                <Button variant="outline" className="flex items-center gap-2 text-purple-600 border-purple-600 hover:bg-purple-50">
+                  <Shield className="h-4 w-4" />
+                  Expert Overrides
                 </Button>
               </a>
               <a href="/test-search">

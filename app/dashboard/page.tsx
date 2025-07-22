@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus, Search, Sparkles, Loader2, Brain, Settings } from "lucide-react";
+import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus, Search, Sparkles, Loader2, Brain, Settings, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -147,6 +147,12 @@ export default function Dashboard() {
                 <Button variant="outline" className="flex items-center gap-2">
                   <Settings className="h-4 w-4" />
                   Settings
+                </Button>
+              </a>
+              <a href="/fix-embeddings">
+                <Button variant="outline" className="flex items-center gap-2 text-orange-600 border-orange-600 hover:bg-orange-50">
+                  <Wrench className="h-4 w-4" />
+                  Fix Embeddings
                 </Button>
               </a>
               <a href="/test-search">

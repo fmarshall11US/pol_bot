@@ -7,7 +7,13 @@ import { AlertCircle, CheckCircle, Loader2, Wrench } from "lucide-react";
 
 export default function FixEmbeddingsPage() {
   const [isFixing, setIsFixing] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<{
+    success: boolean;
+    totalChunks: number;
+    fixedCount: number;
+    errorCount: number;
+    message: string;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleFixEmbeddings = async () => {
@@ -28,7 +34,7 @@ export default function FixEmbeddingsPage() {
       } else {
         setError(data.error || 'Failed to fix embeddings');
       }
-    } catch (err) {
+    } catch {
       setError('Network error occurred');
     } finally {
       setIsFixing(false);

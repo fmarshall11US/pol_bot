@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { createEmbedding } from "@/lib/openai";
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     console.log('🔧 Starting embedding fix process...');
     const supabase = getSupabaseAdmin();

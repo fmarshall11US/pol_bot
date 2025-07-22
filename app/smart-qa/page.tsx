@@ -367,7 +367,7 @@ export default function SmartQAPage() {
 
         {/* Override Dialog */}
         <Dialog open={showOverrideDialog} onOpenChange={setShowOverrideDialog}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-purple-600" />
@@ -378,7 +378,7 @@ export default function SmartQAPage() {
               </DialogDescription>
             </DialogHeader>
             
-            <div className="space-y-4 py-4">
+            <div className="space-y-4 py-4 overflow-y-auto flex-1 pr-2">
               <div className="space-y-2">
                 <Label>Original Question</Label>
                 <div className="p-3 bg-gray-50 rounded-md">

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // In a real app, this would be stored in a database per user
+// eslint-disable-next-line prefer-const
 let searchSettings = {
   similarityThreshold: 0.3,
   maxResults: 15,

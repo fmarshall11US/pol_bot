@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { createEmbedding } from "@/lib/openai";
 
+interface OverrideUpdateData {
+  corrected_answer?: string;
+  expert_explanation?: string;
+  confidence_threshold?: number;
+  is_active?: boolean;
+  applies_to_all_documents?: boolean;
+  document_ids?: string[];
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -152,7 +161,7 @@ export async function PATCH(request: NextRequest) {
     }
     
     // Prepare update object
-    const updateData: Record<string, any> = {};
+    const updateData: OverrideUpdateData = {};
     if (correctedAnswer !== undefined) updateData.corrected_answer = correctedAnswer;
     if (expertExplanation !== undefined) updateData.expert_explanation = expertExplanation;
     if (confidenceThreshold !== undefined) updateData.confidence_threshold = confidenceThreshold;

@@ -133,11 +133,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Get document names for the relevant chunks
-    const documentIds = [...new Set(relevantChunks.map((chunk: DocumentChunk) => chunk.document_id))];
+    const uniqueDocumentIds = [...new Set(relevantChunks.map((chunk: DocumentChunk) => chunk.document_id))];
     const { data: documents } = await supabase
       .from('documents')
       .select('id, file_name')
-      .in('id', documentIds);
+      .in('id', uniqueDocumentIds);
 
     // Create a map of document ID to name
     const docMap = new Map(documents?.map(d => [d.id, d.file_name]) || []);
@@ -217,7 +217,7 @@ Please provide a comprehensive answer based on the policy information above:`;
       sources,
       confidence,
       searchResults: contextChunks.length,
-      documentsSearched: documentIds.length,
+      documentsSearched: uniqueDocumentIds.length,
       originalQuestion: question,
       isExpertOverride: false
     });

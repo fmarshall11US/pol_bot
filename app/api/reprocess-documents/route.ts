@@ -45,13 +45,9 @@ export async function POST() {
         }
 
         // Process document again with updated processor
-        const chunks = await processDocument({
-          id: doc.id,
-          content: '', // Will use updated placeholder
-          fileName: doc.file_name,
-          fileType: doc.file_type,
-          fileSize: doc.file_size
-        });
+        // Create a dummy buffer since we're using placeholder text
+        const dummyBuffer = Buffer.from('placeholder');
+        const chunks = await processDocument(dummyBuffer, doc.file_type, doc.file_name);
 
         console.log(`✅ Created ${chunks.length} chunks for ${doc.file_name}`);
 

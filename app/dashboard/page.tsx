@@ -113,6 +113,12 @@ export default function Dashboard() {
                   Upload Policy
                 </Button>
               </a>
+              <a href="/about">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <ExternalLink className="h-4 w-4" />
+                  Learn More
+                </Button>
+              </a>
               <a href="/admin">
                 <Button variant="ghost" size="sm" className="flex items-center gap-2 text-gray-600">
                   <Shield className="h-4 w-4" />

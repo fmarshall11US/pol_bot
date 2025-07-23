@@ -23,12 +23,6 @@ export default function Home() {
                 View Dashboard
                 <ArrowRight className="h-4 w-4" />
               </a>
-              <a 
-                href="/about"
-                className="text-sm font-semibold leading-6 text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-              >
-                Learn More <span aria-hidden="true">→</span>
-              </a>
             </div>
           </div>
         </div>
@@ -39,7 +33,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-              Everything you need to understand your coverage
+              Everything you need to understand our policies
             </h2>
             <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
               Simple, powerful, and intelligent insurance document analysis

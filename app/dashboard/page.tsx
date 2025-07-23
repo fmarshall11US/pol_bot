@@ -143,52 +143,22 @@ export default function Dashboard() {
               </Button>
             </a>
             <div className="flex gap-2">
-              <a href="/setup-database">
-                <Button variant="outline" className="flex items-center gap-2 text-blue-600 border-blue-600 hover:bg-blue-50">
-                  <Database className="h-4 w-4" />
-                  Setup Database
-                </Button>
-              </a>
-              <a href="/search-settings">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </Button>
-              </a>
-              <a href="/reprocess-documents">
-                <Button variant="outline" className="flex items-center gap-2 text-green-600 border-green-600 hover:bg-green-50">
-                  <RefreshCw className="h-4 w-4" />
-                  Reprocess Docs
-                </Button>
-              </a>
-              <a href="/fix-embeddings">
-                <Button variant="outline" className="flex items-center gap-2 text-orange-600 border-orange-600 hover:bg-orange-50">
-                  <Wrench className="h-4 w-4" />
-                  Fix Embeddings
-                </Button>
-              </a>
               <a href="/override-management">
                 <Button variant="outline" className="flex items-center gap-2 text-purple-600 border-purple-600 hover:bg-purple-50">
                   <Shield className="h-4 w-4" />
                   Expert Overrides
                 </Button>
               </a>
-              <a href="/debug-overrides">
-                <Button variant="outline" className="flex items-center gap-2 text-red-600 border-red-600 hover:bg-red-50">
-                  <Wrench className="h-4 w-4" />
-                  Debug Overrides
-                </Button>
-              </a>
-              <a href="/test-search">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Search className="h-4 w-4" />
-                  Test Search
-                </Button>
-              </a>
               <a href="/upload">
                 <Button variant="outline" className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
                   Upload Policy
+                </Button>
+              </a>
+              <a href="/admin">
+                <Button variant="ghost" size="sm" className="flex items-center gap-2 text-gray-600">
+                  <Shield className="h-4 w-4" />
+                  Admin
                 </Button>
               </a>
             </div>

@@ -36,12 +36,17 @@ export async function POST(request: NextRequest) {
         })
       });
       
+      console.log('🔍 Override search params:', { question, documentIds, similarityThreshold: 0.85 });
+      
       const overrideResponse = await searchOverrides(searchRequest);
+      console.log('🔍 Override response status:', overrideResponse.status);
       
       if (overrideResponse.ok) {
         const overrideData = await overrideResponse.json();
+        console.log('🔍 Override data:', overrideData);
+        
         if (overrideData.found && overrideData.override) {
-          console.log('✅ Using expert override');
+          console.log('✅ Using expert override with similarity:', overrideData.override.similarity);
           return NextResponse.json({
             answer: overrideData.override.corrected_answer,
             sources: [{
@@ -61,7 +66,11 @@ export async function POST(request: NextRequest) {
               similarity: overrideData.override.similarity
             }
           });
+        } else {
+          console.log('❌ No override found - found:', overrideData.found, 'override:', !!overrideData.override);
         }
+      } else {
+        console.log('❌ Override response not ok:', overrideResponse.status);
       }
     } catch (overrideError) {
       console.error('Error checking overrides:', overrideError);

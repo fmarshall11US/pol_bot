@@ -147,6 +147,26 @@ export default function AdminPage() {
               </a>
             </CardContent>
           </Card>
+
+          {/* Expert Overrides */}
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-purple-600" />
+                Expert Overrides
+              </CardTitle>
+              <CardDescription>
+                Manage expert-verified answers
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <a href="/override-management">
+                <Button className="w-full" variant="outline">
+                  Manage Overrides
+                </Button>
+              </a>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Admin Info */}
@@ -165,6 +185,7 @@ export default function AdminPage() {
               <p>• <strong>Fix Embeddings:</strong> Repair documents with incorrect vector dimensions</p>
               <p>• <strong>Reprocess Documents:</strong> Re-extract text from PDFs and regenerate embeddings</p>
               <p>• <strong>Search Settings:</strong> Adjust similarity thresholds and search parameters</p>
+              <p>• <strong>Expert Overrides:</strong> Create and manage expert-verified answers</p>
             </div>
           </CardContent>
         </Card>

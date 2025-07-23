@@ -46,28 +46,10 @@ export async function POST(request: NextRequest) {
         console.log('🔍 Override data:', overrideData);
         
         if (overrideData.found && overrideData.override) {
-          console.log('✅ Using expert override with similarity:', overrideData.override.similarity);
-          const overrideResponse = NextResponse.json({
-            answer: overrideData.override.corrected_answer,
-            sources: [{
-              document: 'Expert Override',
-              section: 'Expert Knowledge',
-              content: overrideData.override.expert_explanation || 'This answer has been verified and corrected by an expert.',
-              similarity: Math.round(overrideData.override.similarity * 100),
-              relevance: 'Expert'
-            }],
-            confidence: "expert",
-            searchResults: 1,
-            documentsSearched: 0,
-            isExpertOverride: true,
-            overrideDetails: {
-              originalQuestion: overrideData.override.original_question,
-              timesUsed: overrideData.override.times_used,
-              similarity: overrideData.override.similarity
-            }
-          });
-          console.log('🚀 RETURNING EXPERT OVERRIDE RESPONSE');
-          return overrideResponse;
+          console.log('✅ Found expert override with similarity:', overrideData.override.similarity);
+          console.log('🔄 Continuing to generate AI response for additional context...');
+          // Store the override but continue to generate AI response for additional context
+          var expertOverride = overrideData.override;
         } else {
           console.log('❌ No override found - found:', overrideData.found, 'override:', !!overrideData.override);
         }
@@ -222,6 +204,33 @@ Please provide a comprehensive answer based on the policy information above:`;
                      topSimilarity > 0.6 ? 'medium' : 'low';
 
     console.log('✅ Smart Q&A completed');
+
+    // Check if we have an expert override to include
+    if (typeof expertOverride !== 'undefined') {
+      console.log('🚀 Returning combined expert override + AI response');
+      return NextResponse.json({
+        expertAnswer: expertOverride.corrected_answer,
+        answer,
+        sources: [{
+          document: 'Expert Override',
+          section: 'Expert Knowledge',
+          content: expertOverride.expert_explanation || 'This answer has been verified and corrected by an expert.',
+          similarity: Math.round(expertOverride.similarity * 100),
+          relevance: 'Expert'
+        }, ...sources],
+        confidence: "expert",
+        searchResults: contextChunks.length + 1,
+        documentsSearched: uniqueDocumentIds.length,
+        originalQuestion: question,
+        isExpertOverride: true,
+        hasAIContext: true,
+        overrideDetails: {
+          originalQuestion: expertOverride.original_question,
+          timesUsed: expertOverride.times_used,
+          similarity: expertOverride.similarity
+        }
+      });
+    }
 
     return NextResponse.json({
       answer,

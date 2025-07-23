@@ -197,36 +197,85 @@ export default function SmartQAPage() {
         {/* Response */}
         {response && (
           <div className="space-y-6">
-            {/* Answer */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    {response.isExpertOverride ? (
-                      <>
-                        <Shield className="h-5 w-5 text-purple-600" />
-                        Expert Answer
-                      </>
-                    ) : (
-                      <>
-                        <Brain className="h-5 w-5" />
-                        Answer
-                      </>
-                    )}
-                  </CardTitle>
-                  <div className="flex items-center gap-2">
-                    {response.isExpertOverride && (
+            {/* Expert Answer (if available) */}
+            {response.isExpertOverride && response.expertAnswer && (
+              <Card className="border-purple-200 bg-purple-50">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Shield className="h-5 w-5 text-purple-600" />
+                      Expert Answer
+                    </CardTitle>
+                    <div className="flex items-center gap-2">
                       <Badge className="bg-purple-100 text-purple-800">
                         Expert Verified
                       </Badge>
+                      <Badge className="bg-purple-600 text-white">
+                        expert confidence
+                      </Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {response.overrideDetails && (
+                      <div className="bg-purple-100 border border-purple-300 rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <Shield className="h-5 w-5 text-purple-600 mt-0.5" />
+                          <div className="text-sm">
+                            <p className="font-medium text-purple-900">
+                              This is an expert-verified answer
+                            </p>
+                            <p className="text-purple-700 mt-1">
+                              Used {response.overrideDetails.timesUsed} times • 
+                              {Math.round(response.overrideDetails.similarity * 100)}% match to original question
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     )}
-                    <Badge className={getConfidenceColor(response.confidence)}>
-                      {response.confidence} confidence
-                    </Badge>
-                    <Badge variant="outline">
-                      {response.searchResults} results
-                    </Badge>
-                    {!response.isExpertOverride && (
+                    <div className="prose max-w-none">
+                      <p className="text-gray-800 font-medium whitespace-pre-wrap">
+                        {response.expertAnswer}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* AI-Generated Answer (if expert answer exists, show as additional context) */}
+            {response.hasAIContext ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Brain className="h-5 w-5" />
+                    Additional Context from AI Analysis
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="prose max-w-none">
+                    <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                      {response.answer}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : !response.isExpertOverride && (
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Brain className="h-5 w-5" />
+                      Answer
+                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                      <Badge className={getConfidenceColor(response.confidence)}>
+                        {response.confidence} confidence
+                      </Badge>
+                      <Badge variant="outline">
+                        {response.searchResults} results
+                      </Badge>
                       <Button
                         size="sm"
                         variant="outline"
@@ -236,36 +285,18 @@ export default function SmartQAPage() {
                         <Edit3 className="h-3 w-3" />
                         Override
                       </Button>
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {response.isExpertOverride && response.overrideDetails && (
-                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                      <div className="flex items-start gap-3">
-                        <Shield className="h-5 w-5 text-purple-600 mt-0.5" />
-                        <div className="text-sm">
-                          <p className="font-medium text-purple-900">
-                            This is an expert-verified answer
-                          </p>
-                          <p className="text-purple-700 mt-1">
-                            Used {response.overrideDetails.timesUsed} times • 
-                            {Math.round(response.overrideDetails.similarity * 100)}% match to original question
-                          </p>
-                        </div>
-                      </div>
                     </div>
-                  )}
+                  </div>
+                </CardHeader>
+                <CardContent>
                   <div className="prose max-w-none">
                     <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
                       {response.answer}
                     </p>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Sources */}
             {response.sources.length > 0 && (

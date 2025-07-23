@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           question, 
-          documentIds,
+          documentIds: documentIds || null,
           similarityThreshold: 0.85
         })
       });

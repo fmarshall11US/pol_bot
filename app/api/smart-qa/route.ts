@@ -216,10 +216,10 @@ Please provide a comprehensive answer based on the policy information above:`;
     // Check if we have an expert override to include
     if (expertOverride !== null) {
       console.log('🚀 Returning combined expert override + AI response');
-      console.log('📝 Expert answer being sent:', expertOverride.corrected_answer);
-      console.log('📝 Expert answer length:', expertOverride.corrected_answer?.length);
+      console.log('📝 Expert answer being sent:', expertOverride.expert_explanation);
+      console.log('📝 Expert answer length:', expertOverride.expert_explanation?.length);
       return NextResponse.json({
-        expertAnswer: expertOverride.corrected_answer,
+        expertAnswer: expertOverride.expert_explanation,
         answer,
         sources: [{
           document: 'Expert Override',

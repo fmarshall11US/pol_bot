@@ -16,18 +16,18 @@ export default function Home() {
               Our AI understands complex insurance language and learns from every interaction.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <a
-                href="/upload"
+              <a 
+                href="/dashboard"
                 className="rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors flex items-center gap-2"
               >
-                Get Started
+                View Dashboard
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a 
-                href="/dashboard"
+                href="/about"
                 className="text-sm font-semibold leading-6 text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
               >
-                View Dashboard <span aria-hidden="true">→</span>
+                Learn More <span aria-hidden="true">→</span>
               </a>
             </div>
           </div>

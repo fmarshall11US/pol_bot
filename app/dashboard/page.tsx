@@ -107,12 +107,6 @@ export default function Dashboard() {
               </Button>
             </a>
             <div className="flex gap-2">
-              <a href="/override-management">
-                <Button variant="outline" className="flex items-center gap-2 text-purple-600 border-purple-600 hover:bg-purple-50">
-                  <Shield className="h-4 w-4" />
-                  Expert Overrides
-                </Button>
-              </a>
               <a href="/upload">
                 <Button variant="outline" className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />

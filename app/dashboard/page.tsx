@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus, Search, Sparkles, Loader2, Brain, Settings, Wrench, RefreshCw, Shield, Database } from "lucide-react";
+import { FileText, MessageSquare, Upload, Calendar, ExternalLink, Plus, Brain, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,15 +16,6 @@ interface Document {
   chunk_count?: number;
 }
 
-interface SearchRecommendation {
-  document_id: string;
-  file_name: string;
-  policy_type: string;
-  relevance_score: number;
-  match_reason: string;
-  matched_content: string;
-  source: string;
-}
 
 export default function Dashboard() {
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -154,7 +145,7 @@ export default function Dashboard() {
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && !isSearching && searchQuery.trim() && (window.location.href = `/smart-qa?q=${encodeURIComponent(searchQuery.trim())}`)}
+                onKeyDown={(e) => e.key === 'Enter' && searchQuery.trim() && (window.location.href = `/smart-qa?q=${encodeURIComponent(searchQuery.trim())}`)}
                 placeholder="e.g., 'What is an auto?', 'What does liability coverage include?', 'How do I file a claim?'..."
                 className="flex-1"
               />

@@ -30,9 +30,6 @@ export default function Dashboard() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchRecommendation[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
 
   useEffect(() => {
     fetchDocuments();
@@ -52,30 +49,6 @@ export default function Dashboard() {
     }
   };
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
-
-    setIsSearching(true);
-    try {
-      const response = await fetch('/api/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: searchQuery }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setSearchResults(data.recommendations || []);
-        setShowSearch(true);
-      }
-    } catch (error) {
-      console.error('Search failed:', error);
-    } finally {
-      setIsSearching(false);
-    }
-  };
 
 
   const formatFileSize = (bytes: number) => {
@@ -165,15 +138,15 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Smart Policy Search */}
+        {/* Ask AI Questions */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-blue-500" />
-              Smart Policy Search
+              <Brain className="h-5 w-5 text-blue-500" />
+              Ask AI Questions
             </CardTitle>
             <CardDescription>
-              Describe what you need and we&apos;ll recommend policies based on expert underwriter knowledge and hints
+              Ask questions about your insurance policies and get AI-powered answers with expert overrides
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -181,74 +154,28 @@ export default function Dashboard() {
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                placeholder="e.g., 'coverage for car accident', 'home fire damage', 'business liability'..."
+                onKeyDown={(e) => e.key === 'Enter' && !isSearching && searchQuery.trim() && (window.location.href = `/smart-qa?q=${encodeURIComponent(searchQuery.trim())}`)}
+                placeholder="e.g., 'What is an auto?', 'What does liability coverage include?', 'How do I file a claim?'..."
                 className="flex-1"
               />
               <Button 
-                onClick={handleSearch} 
-                disabled={isSearching || !searchQuery.trim()}
-                className="px-6"
+                onClick={() => searchQuery.trim() && (window.location.href = `/smart-qa?q=${encodeURIComponent(searchQuery.trim())}`)}
+                disabled={!searchQuery.trim()}
+                className="px-6 bg-blue-600 hover:bg-blue-700"
               >
-                {isSearching ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Search className="h-4 w-4" />
-                )}
+                <Brain className="h-4 w-4 mr-2" />
+                Ask AI
               </Button>
             </div>
             
-            {showSearch && (
-              <div className="mt-6">
-                {searchResults.length > 0 ? (
-                  <div className="space-y-3">
-                    <h3 className="font-medium text-gray-900 dark:text-white">
-                      Recommended Policies for &ldquo;{searchQuery}&rdquo;:
-                    </h3>
-                    {searchResults.map((result) => (
-                      <Card key={result.document_id} className="border-l-4 border-l-blue-500">
-                        <CardContent className="pt-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <h4 className="font-medium">{result.file_name}</h4>
-                                <Badge variant="outline">{result.policy_type}</Badge>
-                                <Badge 
-                                  variant={result.relevance_score > 0.7 ? "default" : "secondary"}
-                                  className="text-xs"
-                                >
-                                  {Math.round(result.relevance_score * 100)}% match
-                                </Badge>
-                              </div>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                {result.match_reason}
-                              </p>
-                              <p className="text-xs text-gray-500 dark:text-gray-500">
-                                &ldquo;{result.matched_content}&rdquo;
-                              </p>
-                            </div>
-                            <div className="flex gap-2 ml-4">
-                              <a href={`/qa/${result.document_id}`}>
-                                <Button size="sm" variant="outline">
-                                  <MessageSquare className="h-4 w-4 mr-2" />
-                                  Ask Questions
-                                </Button>
-                              </a>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-4">
-                    <p className="text-gray-600 dark:text-gray-400">
-                      No relevant policies found. Try different search terms or upload more policies.
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
+            <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mb-2">💡 <strong>How it works:</strong></p>
+              <ul className="space-y-1 ml-4">
+                <li>• AI searches across all your uploaded policies</li>
+                <li>• Expert overrides provide verified answers when available</li>
+                <li>• Get both expert knowledge and AI analysis</li>
+              </ul>
+            </div>
           </CardContent>
         </Card>
 

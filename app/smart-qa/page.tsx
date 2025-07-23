@@ -49,9 +49,21 @@ export default function SmartQAPage() {
   });
   const [overrideSaving, setOverrideSaving] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!question.trim()) return;
+  // Check for query parameter on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryParam = urlParams.get('q');
+      if (queryParam) {
+        setQuestion(queryParam);
+        // Auto-submit the question
+        handleSubmitWithQuestion(queryParam);
+      }
+    }
+  }, []);
+
+  const handleSubmitWithQuestion = async (questionText: string) => {
+    if (!questionText.trim()) return;
 
     setLoading(true);
     setError("");
@@ -60,8 +72,10 @@ export default function SmartQAPage() {
     try {
       const res = await fetch("/api/smart-qa", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: question.trim() }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ question: questionText.trim() }),
       });
 
       if (!res.ok) {
@@ -77,6 +91,11 @@ export default function SmartQAPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handleSubmitWithQuestion(question);
   };
 
   const getConfidenceColor = (confidence: string) => {

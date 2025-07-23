@@ -199,6 +199,8 @@ export default function SmartQAPage() {
         {/* Response */}
         {response && (
           <div className="space-y-6">
+            {/* Debug: Log response to console */}
+            {console.log('Smart Q&A Response:', response)}
             {/* Expert Answer (if available) */}
             {response.isExpertOverride && response.expertAnswer && (
               <Card className="border-purple-200 bg-purple-50">

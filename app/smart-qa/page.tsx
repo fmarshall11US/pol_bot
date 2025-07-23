@@ -237,10 +237,12 @@ export default function SmartQAPage() {
                         </div>
                       </div>
                     )}
-                    <div className="prose max-w-none">
-                      <p className="text-gray-800 font-medium whitespace-pre-wrap">
-                        {response.expertAnswer || `[DEBUG: expertAnswer is ${typeof response.expertAnswer}, value: ${response.expertAnswer}]`}
-                      </p>
+                    <div className="prose max-w-none mt-4">
+                      <div className="p-4 bg-white rounded-lg border border-purple-200">
+                        <p className="text-gray-800 font-medium whitespace-pre-wrap">
+                          {response.expertAnswer || `[DEBUG: expertAnswer is ${typeof response.expertAnswer}, value: "${response.expertAnswer}"]`}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

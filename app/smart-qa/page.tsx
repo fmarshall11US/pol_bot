@@ -69,6 +69,7 @@ export default function SmartQAPage() {
       }
 
       const data = await res.json();
+      console.log('Smart Q&A Response:', data);
       setResponse(data);
     } catch (err) {
       setError("Failed to process your question. Please try again.");
@@ -199,8 +200,6 @@ export default function SmartQAPage() {
         {/* Response */}
         {response && (
           <div className="space-y-6">
-            {/* Debug: Log response to console */}
-            {console.log('Smart Q&A Response:', response)}
             {/* Expert Answer (if available) */}
             {response.isExpertOverride && response.expertAnswer && (
               <Card className="border-purple-200 bg-purple-50">

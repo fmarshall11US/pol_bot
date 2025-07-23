@@ -240,7 +240,7 @@ export default function SmartQAPage() {
                     )}
                     <div className="prose max-w-none">
                       <p className="text-gray-800 font-medium whitespace-pre-wrap">
-                        {response.expertAnswer}
+                        {response.expertAnswer || `[DEBUG: expertAnswer is ${typeof response.expertAnswer}, value: ${response.expertAnswer}]`}
                       </p>
                     </div>
                   </div>

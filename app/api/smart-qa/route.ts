@@ -22,6 +22,14 @@ export async function POST(request: NextRequest) {
     }
 
     // First, check for expert overrides
+    let expertOverride: {
+      id: string;
+      original_question: string;
+      corrected_answer: string;
+      expert_explanation: string;
+      similarity: number;
+      times_used: number;
+    } | null = null;
     console.log('🔍 Checking for expert overrides...');
     try {
       // Import the search function directly to avoid fetch issues
@@ -49,7 +57,7 @@ export async function POST(request: NextRequest) {
           console.log('✅ Found expert override with similarity:', overrideData.override.similarity);
           console.log('🔄 Continuing to generate AI response for additional context...');
           // Store the override but continue to generate AI response for additional context
-          var expertOverride = overrideData.override;
+          expertOverride = overrideData.override;
         } else {
           console.log('❌ No override found - found:', overrideData.found, 'override:', !!overrideData.override);
         }
@@ -206,7 +214,7 @@ Please provide a comprehensive answer based on the policy information above:`;
     console.log('✅ Smart Q&A completed');
 
     // Check if we have an expert override to include
-    if (typeof expertOverride !== 'undefined') {
+    if (expertOverride !== null) {
       console.log('🚀 Returning combined expert override + AI response');
       return NextResponse.json({
         expertAnswer: expertOverride.corrected_answer,

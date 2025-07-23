@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         
         if (overrideData.found && overrideData.override) {
           console.log('✅ Using expert override with similarity:', overrideData.override.similarity);
-          return NextResponse.json({
+          const overrideResponse = NextResponse.json({
             answer: overrideData.override.corrected_answer,
             sources: [{
               document: 'Expert Override',
@@ -66,6 +66,8 @@ export async function POST(request: NextRequest) {
               similarity: overrideData.override.similarity
             }
           });
+          console.log('🚀 RETURNING EXPERT OVERRIDE RESPONSE');
+          return overrideResponse;
         } else {
           console.log('❌ No override found - found:', overrideData.found, 'override:', !!overrideData.override);
         }

@@ -39,7 +39,7 @@ export default function AboutPage() {
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               Our AI-powered insurance policy search system uses advanced vector embeddings and semantic search 
               to understand your questions in natural language and find relevant information across all your 
-              uploaded policies. Here's how it works behind the scenes:
+              uploaded policies. Here&apos;s how it works behind the scenes:
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -134,7 +134,7 @@ export default function AboutPage() {
                   <div>
                     <h4 className="font-medium">text-embedding-ada-002 Model</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Each text chunk is processed through OpenAI's advanced embedding model, 
+                      Each text chunk is processed through OpenAI&apos;s advanced embedding model, 
                       creating a 1536-dimensional vector that captures semantic meaning.
                     </p>
                   </div>

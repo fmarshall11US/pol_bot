@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const supabase = getSupabaseAdmin();
     
     // Check if we have any overrides at all
-    const { data: allOverrides, error: allError } = await supabase
+    const { data: allOverrides } = await supabase
       .from('expert_overrides')
       .select('*')
       .eq('is_active', true);

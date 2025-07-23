@@ -20,7 +20,14 @@ interface DebugResult {
       confidence_threshold: number;
       would_trigger: boolean;
     }>;
-    bestMatch?: any;
+    bestMatch?: {
+      id: string;
+      original_question: string;
+      corrected_answer: string;
+      similarity: number;
+      confidence_threshold: number;
+      would_trigger: boolean;
+    } | null;
     functionExists: boolean;
     rpcError?: string;
     embedDimensions?: number;
@@ -169,7 +176,7 @@ export default function DebugOverridesPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {result.debug.manualResults.map((match, index) => (
+                    {result.debug.manualResults.map((match) => (
                       <div key={match.id} className="border rounded-lg p-4">
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex-1">

@@ -20,12 +20,14 @@ interface Source {
 
 interface QAResponse {
   answer: string;
+  expertAnswer?: string;
   sources: Source[];
   confidence: string;
   searchResults: number;
   documentsSearched: number;
   originalQuestion?: string;
   isExpertOverride?: boolean;
+  hasAIContext?: boolean;
   overrideDetails?: {
     originalQuestion: string;
     timesUsed: number;

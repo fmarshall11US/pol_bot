@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       .rpc('search_expert_overrides', {
         query_embedding: questionEmbedding,
         similarity_threshold: similarityThreshold,
-        document_ids: documentIds || null,
+        doc_ids: documentIds || null,
         limit_count: 1
       });
     

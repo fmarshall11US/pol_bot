@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
     if (overrides && overrides.length > 0) {
       const override = overrides[0];
       console.log(`✅ Found override with ${(override.similarity * 100).toFixed(1)}% similarity`);
+      console.log('✅ Override details:', override);
       
       // Record usage
       await supabase.rpc('record_override_usage', {

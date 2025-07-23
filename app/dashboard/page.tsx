@@ -173,6 +173,12 @@ export default function Dashboard() {
                   Expert Overrides
                 </Button>
               </a>
+              <a href="/debug-overrides">
+                <Button variant="outline" className="flex items-center gap-2 text-red-600 border-red-600 hover:bg-red-50">
+                  <Wrench className="h-4 w-4" />
+                  Debug Overrides
+                </Button>
+              </a>
               <a href="/test-search">
                 <Button variant="outline" className="flex items-center gap-2">
                   <Search className="h-4 w-4" />
